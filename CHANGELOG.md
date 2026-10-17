@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Unreleased
+
+- `ReportWriter` writes the HTML to a temporary directory that only the user can read (`0700`), and under a name
+  of its own in the `$dir` given, so that a `report.html` there is not overwritten
+- Documentation: `Item::$body` and `Document::$css` are raw HTML and CSS
+
 ## 1.0.1
 
 - The row under the headings of a list has its border again: the border of the last row was removed for the row
