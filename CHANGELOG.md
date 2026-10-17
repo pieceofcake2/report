@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## 1.0.1
 
 - The row under the headings of a list has its border again: the border of the last row was removed for the row
   of a `thead` too
