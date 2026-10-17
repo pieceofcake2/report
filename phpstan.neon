@@ -1,0 +1,10 @@
+parameters:
+    level: 5
+    phpVersion: 80000
+    paths:
+        - src
+        - docs/examples
+        - resources
+        - tests/TestCase
+    bootstrapFiles:
+        - tests/bootstrap.php

@@ -1,0 +1,22 @@
+{
+    "verdict.passed": "合格",
+    "verdict.failed": "不合格",
+    "section.target": "対象",
+    "section.run": "実行",
+    "field.repository": "リポジトリ",
+    "field.branch": "ブランチ",
+    "field.commit": "コミット",
+    "field.date": "実行日時",
+    "field.duration": "所要時間",
+    "field.environment": "実行環境",
+    "field.software": "ソフトウェア",
+    "field.no": "No.",
+    "field.result": "結果",
+    "date.range": "{start} 〜 {end}（{timezone}）",
+    "duration.seconds": "{seconds}秒",
+    "duration.minutes": "{minutes}分{seconds}秒",
+    "duration.hours": "{hours}時間{minutes}分{seconds}秒",
+    "environment.local": "ローカル（{os}）",
+    "commit.dirty": "コミットしていない変更あり",
+    "header.run": "{date} 実行"
+}

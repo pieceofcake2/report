@@ -1,0 +1,32 @@
+{
+    "name": "pieceofcake2/report",
+    "description": "A4 PDF reports printed by the Chrome command line: a cover with the result, a list and a page for each item",
+    "type": "library",
+    "keywords": ["report", "pdf", "chrome", "headless", "testing", "security"],
+    "license": "MIT",
+    "homepage": "https://pieceofcake2.github.io/report/",
+    "require": {
+        "php": ">=8.0"
+    },
+    "require-dev": {
+        "cakephp/cakephp-codesniffer": "^5.0",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^9.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "PieceOfCake2\\Report\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PieceOfCake2\\Report\\Test\\": "tests/TestCase/"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}

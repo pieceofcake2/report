@@ -1,0 +1,22 @@
+{
+    "verdict.passed": "PASSED",
+    "verdict.failed": "FAILED",
+    "section.target": "Target",
+    "section.run": "Run",
+    "field.repository": "Repository",
+    "field.branch": "Branch",
+    "field.commit": "Commit",
+    "field.date": "Date",
+    "field.duration": "Duration",
+    "field.environment": "Environment",
+    "field.software": "Software",
+    "field.no": "No.",
+    "field.result": "Result",
+    "date.range": "{start} – {end} ({timezone})",
+    "duration.seconds": "{seconds}s",
+    "duration.minutes": "{minutes}m {seconds}s",
+    "duration.hours": "{hours}h {minutes}m {seconds}s",
+    "environment.local": "Local ({os})",
+    "commit.dirty": "with uncommitted changes",
+    "header.run": "Run on {date}"
+}
