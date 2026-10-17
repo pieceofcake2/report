@@ -10,13 +10,19 @@
 * { box-sizing: border-box; }
 /* Chrome clips the right edge of the printed area: a little padding keeps the right borders whole */
 body { margin: 0; padding: 0 0.5mm; font-family: "Hiragino Sans", "Noto Sans CJK JP", "Noto Sans JP", "Noto Sans", sans-serif; font-size: 9.5pt; line-height: 1.6; color: var(--ink); }
-h1, h2, h3 { line-height: 1.3; margin: 0; }
-/* Separate borders: with collapsed borders, half of the outer border is outside the table and is clipped */
+/* Headings break only between words, spaces and zero width spaces (U+200B) of Japanese titles, or anywhere
+   when a word does not fit */
+h1, h2, h3 { line-height: 1.3; margin: 0; word-break: keep-all; overflow-wrap: anywhere; }
+/* Separate borders: with collapsed borders, half of the outer border is outside the table and is clipped. Chrome
+   puts the borders on whole CSS pixels; a row is 28px (20px line, 7px padding, 1px border), a multiple of 4px,
+   which is 3pt, so that at 100% in a viewer, where a point is a pixel, the borders of all the rows fall on the
+   pixels the same way and look the same */
 table { border-collapse: separate; border-spacing: 0; width: 100%; border: 1pt solid var(--frame); table-layout: fixed; }
-th, td { border: 0; border-right: 0.75pt solid var(--line); border-bottom: 0.75pt solid var(--line); padding: 4px 7px; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+th, td { border: 0; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 4px 7px 3px; line-height: 20px; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
 th { background: var(--soft); font-weight: 600; }
 th:last-child, td:last-child { border-right: 0; }
-tr:last-child > th, tr:last-child > td { border-bottom: 0; }
+/* The last row has the border of the table; the row of a thead keeps its border above the first row */
+tbody > tr:last-child > th, tbody > tr:last-child > td { border-bottom: 0; }
 col.no { width: 13mm; } col.res { width: 19mm; } col.time { width: 16mm; }
 td.res { text-align: center; }
 .mono, pre { font-family: "SF Mono", Menlo, "DejaVu Sans Mono", "Noto Sans Mono CJK JP", monospace; }
