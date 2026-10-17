@@ -21,7 +21,8 @@ class ReportWriterTest extends TestCase
     {
         $chrome = TMP . 'fake-chrome';
         file_put_contents($chrome, "#!/bin/sh\nfor arg; do case \"\$arg\" in --print-to-pdf=*) printf '%%PDF-1.4' > \"\${arg#--print-to-pdf=}\";; esac; html=\"\$arg\"; done\n"
-            . "file=\"\${html#file://}\"\nprintf '%s %s' \"\$file\" \"\$(stat -f %Lp \"\$(dirname \"\$file\")\" 2>/dev/null || stat -c %a \"\$(dirname \"\$file\")\")\" > " . escapeshellarg($log) . "\n");
+            // The mode by PHP: stat differs between macOS and Linux
+            . escapeshellarg(PHP_BINARY) . ' -r ' . escapeshellarg('$file = substr($argv[1], 7); printf("%s %o", $file, fileperms(dirname($file)) & 0777);') . ' "$html" > ' . escapeshellarg($log) . "\n");
         chmod($chrome, 0755);
 
         return new PdfPrinter($chrome);
