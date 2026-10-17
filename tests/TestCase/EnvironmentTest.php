@@ -145,7 +145,7 @@ class EnvironmentTest extends TestCase
 
     public function testDetect(): void
     {
-        $environment = Environment::detect(dirname(__DIR__, 3));
+        $environment = Environment::detect(dirname(__DIR__, 2));
 
         $this->assertNotNull($environment->commit);
     }
