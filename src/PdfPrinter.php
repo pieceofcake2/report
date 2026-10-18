@@ -208,17 +208,36 @@ final class PdfPrinter
      */
     private static function stop($process, int $pid): void
     {
+        $helpers = [];
         if (PHP_OS_FAMILY !== 'Windows') {
-            exec('pkill -TERM -P ' . $pid . ' 2>/dev/null');
+            exec('pgrep -P ' . $pid . ' 2>/dev/null', $helpers);
+            $helpers = array_values(array_filter(array_map('intval', $helpers)));
+            foreach ($helpers as $helper) {
+                exec('kill -TERM ' . $helper . ' 2>/dev/null');
+            }
         }
         proc_terminate($process);
+        // Until Chrome and its helpers have ended, then killed
+        $running = static function () use ($process, $helpers): bool {
+            if (proc_get_status($process)['running']) {
+                return true;
+            }
+            foreach ($helpers as $helper) {
+                exec('kill -0 ' . $helper . ' 2>/dev/null', $output, $code);
+                if ($code === 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
         $deadline = microtime(true) + 5;
-        while (proc_get_status($process)['running'] && microtime(true) < $deadline) {
+        while ($running() && microtime(true) < $deadline) {
             usleep(50000);
         }
-        if (proc_get_status($process)['running']) {
-            if (PHP_OS_FAMILY !== 'Windows') {
-                exec('pkill -KILL -P ' . $pid . ' 2>/dev/null');
+        if ($running()) {
+            foreach ($helpers as $helper) {
+                exec('kill -KILL ' . $helper . ' 2>/dev/null');
             }
             proc_terminate($process, 9);
         }
