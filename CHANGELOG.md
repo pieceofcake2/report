@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## 1.0.2
 
 - `ReportWriter` writes the HTML to a temporary directory that only the user can read (`0700`), and under a name
   of its own in the `$dir` given, so that a `report.html` there is not overwritten
