@@ -58,6 +58,14 @@ $doc = new Document(
 The badges of the bundled CSS are `pass` (green), `fail` (red) and `skip` (yellow). Add classes for other
 badges, or the styles of the bodies of the items, with `Document::$css`.
 
+`Item::$body` and `Document::$css` are written to the HTML as they are, not escaped: build them from trusted
+values, and escape the values of the test or of the scan, e.g. with `htmlspecialchars()`. The other texts are
+escaped by `HtmlRenderer`.
+
+`ReportWriter::write()` writes the HTML to a temporary directory that only the user can read, and removes it
+after printing. With the `$dir` argument, for the files that the bodies link to (e.g. images), the HTML is
+written there under a name of its own and removed after printing.
+
 ## Languages
 
 `Translator` reads the common messages of this package, then those of the directories you give, which add

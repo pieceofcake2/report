@@ -35,10 +35,12 @@ final class ReportWriter
         $html = ($this->renderer ?? new HtmlRenderer())->render($doc);
         $temporary = $dir === null;
         $dir ??= sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'report-' . bin2hex(random_bytes(6));
-        if (!is_dir($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
+        // Only the user can read a temporary directory: the report may hold what the other users must not see
+        if (!is_dir($dir) && !mkdir($dir, $temporary ? 0700 : 0777, true) && !is_dir($dir)) {
             throw new RuntimeException(sprintf('Cannot create the directory: %s', $dir));
         }
-        $file = $dir . DIRECTORY_SEPARATOR . 'report.html';
+        // A name of its own, so that a report.html of the directory given is not overwritten
+        $file = $dir . DIRECTORY_SEPARATOR . 'report-' . bin2hex(random_bytes(6)) . '.html';
         try {
             if (file_put_contents($file, $html) === false) {
                 throw new RuntimeException(sprintf('Cannot write the HTML of the report: %s', $file));
