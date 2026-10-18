@@ -68,4 +68,32 @@ class PdfPrinterTest extends TestCase
             $this->markTestSkipped($message);
         }
     }
+
+    public function testTimeoutStopsTheHelpersOfChrome(): void
+    {
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('The fake Chrome is a shell script.');
+        }
+        // A Chrome that never prints, with a helper that keeps writing to its profile
+        $chrome = TMP . 'slow-chrome';
+        $pids = TMP . 'slow-chrome.pids';
+        file_put_contents($chrome, "#!/bin/sh\nfor arg; do case \"\$arg\" in --user-data-dir=*) dir=\"\${arg#--user-data-dir=}\";; esac; done\nmkdir -p \"\$dir\"\n"
+            . "( while true; do date > \"\$dir/helper.log\"; sleep 0.05; done ) &\necho \$! > " . escapeshellarg($pids) . "\nsleep 30\n");
+        chmod($chrome, 0755);
+        file_put_contents(TMP . 'slow.html', '<p>Report</p>');
+        $before = glob(sys_get_temp_dir() . DS . 'report-chrome-*') ?: [];
+
+        try {
+            (new PdfPrinter($chrome, false, 1))->print(TMP . 'slow.html', TMP . 'slow.pdf');
+            $this->fail('Chrome printed nothing.');
+        } catch (RuntimeException $e) {
+            $this->assertStringContainsString('Chrome did not print the report', $e->getMessage());
+        }
+
+        // The helper is stopped, and the directory of Chrome removed
+        $helper = (int)trim((string)file_get_contents($pids));
+        exec('kill -0 ' . $helper . ' 2>/dev/null', $output, $code);
+        $this->assertNotSame(0, $code, 'The helper of Chrome still runs');
+        $this->assertSame($before, glob(sys_get_temp_dir() . DS . 'report-chrome-*') ?: []);
+    }
 }

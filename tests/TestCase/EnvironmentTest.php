@@ -149,4 +149,12 @@ class EnvironmentTest extends TestCase
 
         $this->assertNotNull($environment->commit);
     }
+
+    public function testRunWithMuchErrorOutput(): void
+    {
+        // The error output of a command, e.g. many warnings of Git, does not block its output
+        $run = Closure::bind(static fn(array $command, ?string $dir): ?string => Environment::run($command, $dir), null, Environment::class);
+
+        $this->assertSame('a1b2c3d', $run([PHP_BINARY, '-r', 'fwrite(STDERR, str_repeat("warning\\n", 200000)); echo "a1b2c3d";'], TMP));
+    }
 }
