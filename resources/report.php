@@ -110,7 +110,7 @@ $extra = $doc->columns[3] ?? null;
             <p class="empty"><?= $h($list->empty ?? $none) ?></p>
         <?php else : ?>
             <table>
-            <colgroup><col class="id"><col><?= $badge ? '<col class="res">' : '' ?><?= str_repeat('<col>', max(0, count($list->columns) - ($badge ? 3 : 2))) ?></colgroup>
+            <colgroup><col class="id" style="width: <?= $list->idWidth() ?>mm"><col><?= $badge ? '<col class="res">' : '' ?><?= str_repeat('<col>', max(0, count($list->columns) - ($badge ? 3 : 2))) ?></colgroup>
             <thead><tr><?= implode('', array_map(static fn(string $column): string => '<th>' . $h($column) . '</th>', $list->columns)) ?></tr></thead>
             <tbody>
             <?php foreach ($list->checks as $check) : ?>

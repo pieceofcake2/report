@@ -29,6 +29,19 @@ final class CheckList
     }
 
     /**
+     * The width of the ID column in millimeters: for the longest ID in the monospaced font, from 16 to 48 mm, the
+     * longer IDs wrapping
+     *
+     * @return int
+     */
+    public function idWidth(): int
+    {
+        $length = max(array_merge([0], array_map(static fn(Check $check): int => mb_strlen($check->id), $this->checks)));
+
+        return (int)min(48, max(16, ceil($length * 1.75 + 5)));
+    }
+
+    /**
      * Whether the checks have a badge column
      *
      * @return bool

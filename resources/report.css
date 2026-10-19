@@ -68,7 +68,6 @@ td .mono.sub { font-size: 7.5pt; }
 .checks h3 { font-size: 10pt; margin: 0 0 1.5mm; break-after: avoid; }
 .check-list + .check-list { margin-top: 9mm; }
 .check-note { color: var(--sub); font-size: 8pt; margin: 0 0 1.5mm; break-after: avoid; }
-.checks col.id { width: 38mm; }
 .checks thead { display: table-header-group; }
 .checks tr { break-inside: avoid; }
 

@@ -139,20 +139,28 @@ class HtmlRendererTest extends TestCase
         $this->assertStringContainsString('<h2>Checks</h2>', $html);
         $this->assertStringContainsString('<h3>Passed checks</h3>', $html);
         $this->assertStringContainsString('<p class="check-note">The rules that ran &amp; found nothing.</p>', $html);
-        $this->assertStringContainsString('<colgroup><col class="id"><col><col class="res"><col></colgroup>', $html);
+        $this->assertStringContainsString('<colgroup><col class="id" style="width: 48mm"><col><col class="res"><col></colgroup>', $html);
         $this->assertStringContainsString('<thead><tr><th>Rule</th><th>Name</th><th>Risk</th><th>CWE</th></tr></thead>', $html);
         $this->assertStringContainsString('<td class="mono">cakephp2-query-concatenation</td>', $html);
         $this->assertStringContainsString('<td>SQL &lt;built&gt;</td>', $html);
         $this->assertStringContainsString('<span class="badge high">High</span>', $html);
         $this->assertStringContainsString('<td>CWE-89</td>', $html);
         // Without a badge, the values follow the title; values without a heading are left out
-        $this->assertStringContainsString('<colgroup><col class="id"><col><col></colgroup>', $html);
+        $this->assertStringContainsString('<colgroup><col class="id" style="width: 42mm"><col><col></colgroup>', $html);
         $this->assertStringContainsString('<td>The check is off</td>', $html);
         $this->assertStringNotContainsString('ignored', $html);
         $this->assertStringContainsString('<p class="empty">No &lt;rulesets&gt;</p>', $html);
         // After the list, before the pages of the items
         $this->assertGreaterThan(strpos($html, '<section class="list">'), strpos($html, '<section class="checks">'));
         $this->assertLessThan(strpos($html, '<section class="item"'), strpos($html, '<section class="checks">'));
+    }
+
+    public function testWidthOfTheIds(): void
+    {
+        $this->assertSame(16, (new CheckList('Rules', ['ID', 'Name'], [new Check('10202', 'Anti-CSRF')]))->idWidth());
+        $this->assertSame(16, (new CheckList('Rules', ['ID', 'Name']))->idWidth());
+        $this->assertSame(44, (new CheckList('Rules', ['ID', 'Name'], [new Check('cakephp2-order-request', 'Order')]))->idWidth());
+        $this->assertSame(48, (new CheckList('Rules', ['ID', 'Name'], [new Check(str_repeat('x', 60), 'Long')]))->idWidth());
     }
 
     public function testNoCheckLists(): void

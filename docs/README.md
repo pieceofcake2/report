@@ -49,7 +49,7 @@ $doc = new Document(
 | `Document` | The title, the project, the verdict, the target and run tables, a note, the headings, the header of the pages, extra CSS and the language |
 | `Verdict`, `Count` | The result on the cover (green or red) and the numbers beside it. `Count::PASS` and `Count::FAIL` color a number |
 | `Group`, `Item` | The items by group. An item is a row of the list and a page with a badge, a table (`meta`), a description, a `Message` and a body of HTML. A group without items shows `None` (`Group::$empty`), so that a reader tells it from a group that was left out |
-| `CheckList`, `Check` | Compact tables after the list (`Document::$checkLists`, under `Document::$checksTitle`): a row for each check, without a page, e.g. the rules that ran and found nothing, or those that did not run and why. The columns are the ID, the title, a badge when a check has one, then its values |
+| `CheckList`, `Check` | Compact tables after the list (`Document::$checkLists`, under `Document::$checksTitle`): a row for each check, without a page, e.g. the rules that ran and found nothing, or those that did not run and why. The columns are the ID (as wide as the longest one, up to 48 mm), the title, a badge when a check has one, then its values |
 | `Row` | A row of a table: a label, a value, and optionally a value in a monospaced font, a second line or a warning |
 | `Cover` | The common rows: repository, branch and commit (`target()`), date, duration and environment (`run()`), and the header of the pages |
 | `Environment` | The repository, branch and commit, and the run of GitHub Actions or the local machine (`Environment::detect()`) |
