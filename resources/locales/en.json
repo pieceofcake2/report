@@ -11,6 +11,7 @@
     "field.environment": "Environment",
     "field.software": "Software",
     "field.no": "No.",
+    "group.empty": "None",
     "field.result": "Result",
     "date.range": "{start} – {end} ({timezone})",
     "duration.seconds": "{seconds}s",

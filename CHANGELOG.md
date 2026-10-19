@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Unreleased
+
+- A group without items shows `None` (`なし`) in the list, or the text of `Group::$empty`, instead of an empty
+  table, so that a reader tells an empty group from one that was left out
+- `CheckList` and `Check`: compact tables after the list, on pages of their own before the pages of the items
+  (`Document::$checkLists` and `Document::$checksTitle`), e.g. the checks that ran and found nothing, or those
+  that did not run and why. A check is a row, without a page
+
 ## 1.0.3
 
 - `Environment` no longer blocks on a large error output of Git: it waited for the output while Git waited to

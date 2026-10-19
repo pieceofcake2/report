@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace PieceOfCake2\Report;
 
+use InvalidArgumentException;
+
 /**
  * Renders a report as an HTML page for Chrome to print (`resources/report.php` and `report.css`).
  *
  * The page is A4 with a header and the page numbers (CSS page margin boxes): the cover with the result, the
- * list of the items by group, then a page for each item.
+ * list of the items by group, the tables of checks, then a page for each item.
  */
 final class HtmlRenderer
 {
@@ -29,9 +31,26 @@ final class HtmlRenderer
         return self::include(self::RESOURCE_DIR . DIRECTORY_SEPARATOR . 'report.php', [
             'doc' => $doc,
             'style' => $style,
+            'none' => self::none($doc->language),
             'h' => static fn(?string $text): string => htmlspecialchars((string)$text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
             'css' => static fn(string $text): string => self::cssString($text),
         ]);
+    }
+
+    /**
+     * The text of an empty group or table of checks in a language: `None` in a language that this package does not
+     * have
+     *
+     * @param string $language Language
+     * @return string
+     */
+    private static function none(string $language): string
+    {
+        try {
+            return (new Translator($language))->translate('group.empty');
+        } catch (InvalidArgumentException) {
+            return (new Translator())->translate('group.empty');
+        }
     }
 
     /**

@@ -59,6 +59,18 @@ td .mono.sub { font-size: 7.5pt; }
 .list thead { display: table-header-group; }
 .list tr { break-inside: avoid; }
 .list td a { color: inherit; text-decoration: none; }
+/* A group without items: its heading and "None", so that it is not taken for a group that was left out */
+.empty { margin: 0; padding: 4px 7px 3px; border: 1pt solid var(--frame); color: var(--sub); line-height: 20px; }
+
+/* The tables of checks: a compact row for each, without a page of its own */
+.checks { break-after: page; }
+.checks h2 { font-size: 13pt; margin-bottom: 3mm; }
+.checks h3 { font-size: 10pt; margin: 0 0 1.5mm; break-after: avoid; }
+.check-list + .check-list { margin-top: 9mm; }
+.check-note { color: var(--sub); font-size: 8pt; margin: 0 0 1.5mm; break-after: avoid; }
+.checks col.id { width: 38mm; }
+.checks thead { display: table-header-group; }
+.checks tr { break-inside: avoid; }
 
 .item { break-before: page; }
 .item .group { font-size: 8.5pt; color: var(--sub); }
