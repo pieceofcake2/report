@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Unreleased
+
+- `Environment` no longer blocks on a large error output of Git: it waited for the output while Git waited to
+  write its errors
+- When Chrome does not print in time, its helper processes are stopped too, and Chrome is killed when it does not
+  end, so that no process keeps writing to the directory of Chrome while it is removed
+- An error when the directory of Chrome cannot be created
+
 ## 1.0.2
 
 - `ReportWriter` writes the HTML to a temporary directory that only the user can read (`0700`), and under a name

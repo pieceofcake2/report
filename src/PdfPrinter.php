@@ -7,6 +7,7 @@ use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
+use UnexpectedValueException;
 
 /**
  * Prints an HTML file to PDF with the command line of a headless Chrome (`--print-to-pdf`).
@@ -89,7 +90,9 @@ final class PdfPrinter
         }
 
         $work = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'report-chrome-' . bin2hex(random_bytes(6));
-        mkdir($work, 0700, true);
+        if (!mkdir($work, 0700, true) && !is_dir($work)) {
+            throw new RuntimeException(sprintf('Cannot create the directory of Chrome: %s', $work));
+        }
         $output = $work . DIRECTORY_SEPARATOR . 'report.pdf';
         try {
             $command = [
@@ -183,7 +186,7 @@ final class PdfPrinter
 
         $code = null;
         if ($status['running']) {
-            proc_terminate($process);
+            self::stop($process, (int)$status['pid']);
         } else {
             $code = $status['exitcode'];
         }
@@ -193,6 +196,51 @@ final class PdfPrinter
         proc_close($process);
 
         return [$code, $log];
+    }
+
+    /**
+     * Stops Chrome after its timeout: its helpers first, which would write to its profile while it is removed, then
+     * Chrome, and kills what still runs after a few seconds
+     *
+     * @param resource $process Process of Chrome
+     * @param int $pid Its process ID
+     * @return void
+     */
+    private static function stop($process, int $pid): void
+    {
+        $helpers = [];
+        if (PHP_OS_FAMILY !== 'Windows') {
+            exec('pgrep -P ' . $pid . ' 2>/dev/null', $helpers);
+            $helpers = array_values(array_filter(array_map('intval', $helpers)));
+            foreach ($helpers as $helper) {
+                exec('kill -TERM ' . $helper . ' 2>/dev/null');
+            }
+        }
+        proc_terminate($process);
+        // Until Chrome and its helpers have ended, then killed
+        $running = static function () use ($process, $helpers): bool {
+            if (proc_get_status($process)['running']) {
+                return true;
+            }
+            foreach ($helpers as $helper) {
+                exec('kill -0 ' . $helper . ' 2>/dev/null', $output, $code);
+                if ($code === 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+        $deadline = microtime(true) + 5;
+        while ($running() && microtime(true) < $deadline) {
+            usleep(50000);
+        }
+        if ($running()) {
+            foreach ($helpers as $helper) {
+                exec('kill -KILL ' . $helper . ' 2>/dev/null');
+            }
+            proc_terminate($process, 9);
+        }
     }
 
     /**
@@ -216,14 +264,25 @@ final class PdfPrinter
      */
     private static function remove(string $dir): void
     {
-        if (!is_dir($dir)) {
-            return;
+        // A few times: a process of Chrome that ends may still write a file
+        $try = 0;
+        while ($try++ < 5 && is_dir($dir)) {
+            set_error_handler(static fn(): bool => true);
+            try {
+                $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
+                foreach ($files as $file) {
+                    /** @var \SplFileInfo $file */
+                    $file->isDir() && !$file->isLink() ? rmdir($file->getPathname()) : unlink($file->getPathname());
+                }
+                rmdir($dir);
+            } catch (UnexpectedValueException) {
+                // A directory removed meanwhile
+            } finally {
+                restore_error_handler();
+            }
+            if (is_dir($dir)) {
+                usleep(100000);
+            }
         }
-        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ($files as $file) {
-            /** @var \SplFileInfo $file */
-            $file->isDir() && !$file->isLink() ? rmdir($file->getPathname()) : unlink($file->getPathname());
-        }
-        rmdir($dir);
     }
 }

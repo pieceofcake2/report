@@ -166,7 +166,9 @@ final class Environment
         // A command that is not installed (e.g. Git) is a value that the report leaves out, not an error
         set_error_handler(static fn(): bool => true);
         try {
-            $process = proc_open($command, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, $dir);
+            // The error output to the null device: a large one, e.g. of warnings, would block the command while this
+            // process waits for its output
+            $process = proc_open($command, [1 => ['pipe', 'w'], 2 => ['file', PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null', 'w']], $pipes, $dir);
         } finally {
             restore_error_handler();
         }
@@ -175,7 +177,6 @@ final class Environment
         }
         $output = (string)stream_get_contents($pipes[1]);
         fclose($pipes[1]);
-        fclose($pipes[2]);
 
         return proc_close($process) === 0 ? rtrim($output) : null;
     }
