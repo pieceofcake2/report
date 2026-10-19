@@ -157,8 +157,8 @@ class HtmlRendererTest extends TestCase
 
     public function testWidthOfTheIds(): void
     {
-        $this->assertSame(16, (new CheckList('Rules', ['ID', 'Name'], [new Check('10202', 'Anti-CSRF')]))->idWidth());
-        $this->assertSame(16, (new CheckList('Rules', ['ID', 'Name']))->idWidth());
+        $this->assertSame(20, (new CheckList('Rules', ['ID', 'Name'], [new Check('10202', 'Anti-CSRF')]))->idWidth());
+        $this->assertSame(20, (new CheckList('Rules', ['ID', 'Name']))->idWidth());
         $this->assertSame(44, (new CheckList('Rules', ['ID', 'Name'], [new Check('cakephp2-order-request', 'Order')]))->idWidth());
         $this->assertSame(48, (new CheckList('Rules', ['ID', 'Name'], [new Check(str_repeat('x', 60), 'Long')]))->idWidth());
     }
