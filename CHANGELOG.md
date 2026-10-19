@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## 1.1.0
 
 - A group without items shows `None` (`なし`) in the list, or the text of `Group::$empty`, instead of an empty
   table, so that a reader tells an empty group from one that was left out
