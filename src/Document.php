@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace PieceOfCake2\Report;
 
 /**
- * The content of a report: the cover, the list of the items by group, then a page for each item.
+ * The content of a report: the cover, the list of the items by group, the tables of checks, then a page for each
+ * item.
  */
 final class Document
 {
@@ -27,6 +28,9 @@ final class Document
      * @param string $headerRight Header of the pages after the cover, on the right
      * @param string $css CSS added after the CSS of the report, e.g. for the bodies of the items
      * @param string $language Language of the page, e.g. `en` or `ja`
+     * @param array<\PieceOfCake2\Report\CheckList> $checkLists Tables of checks after the list, e.g. the rules
+     *  that ran and found nothing, on pages of their own before the pages of the items
+     * @param string $checksTitle Heading of the tables of checks
      */
     public function __construct(
         public string $title,
@@ -44,6 +48,8 @@ final class Document
         public string $headerRight = '',
         public string $css = '',
         public string $language = Translator::DEFAULT_LANGUAGE,
+        public array $checkLists = [],
+        public string $checksTitle = '',
     ) {
     }
 }

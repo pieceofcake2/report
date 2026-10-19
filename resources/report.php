@@ -4,6 +4,7 @@
  *
  * @var \PieceOfCake2\Report\Document $doc
  * @var string $style CSS of the report and of the document
+ * @var string $none Text of an empty group or table of checks in the language of the report
  * @var \Closure(?string): string $h Escapes HTML
  * @var \Closure(string): string $css CSS string
  */
@@ -71,25 +72,66 @@ $extra = $doc->columns[3] ?? null;
 <?php foreach ($doc->groups as $group) : ?>
     <div class="group-list">
     <h3><?= $group->no ?>. <?= $h($group->title) ?></h3>
-    <table>
-    <colgroup><col class="no"><col><col class="res"><?= $extra !== null ? '<col class="time">' : '' ?></colgroup>
-    <thead><tr><th><?= $h($doc->columns[0] ?? '') ?></th><th><?= $h($doc->columns[1] ?? '') ?></th><th><?= $h($doc->columns[2] ?? '') ?></th><?= $extra !== null ? '<th>' . $h($extra) . '</th>' : '' ?></tr></thead>
-    <tbody>
-    <?php foreach ($group->items as $item) : ?>
-        <tr>
-        <td><?= $h($item->no) ?></td>
-        <td><a href="#<?= $h($item->anchor()) ?>"><?= $h($item->title) ?></a></td>
-        <td class="res"><span class="badge <?= $h($item->badge) ?>"><?= $h($item->badgeLabel) ?></span></td>
-        <?php if ($extra !== null) : ?>
-            <td class="num"><?= $h($item->extra) ?></td>
-        <?php endif; ?>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-    </table>
+    <?php if ($group->items === []) : ?>
+        <p class="empty"><?= $h($group->empty ?? $none) ?></p>
+    <?php else : ?>
+        <table>
+        <colgroup><col class="no"><col><col class="res"><?= $extra !== null ? '<col class="time">' : '' ?></colgroup>
+        <thead><tr><th><?= $h($doc->columns[0] ?? '') ?></th><th><?= $h($doc->columns[1] ?? '') ?></th><th><?= $h($doc->columns[2] ?? '') ?></th><?= $extra !== null ? '<th>' . $h($extra) . '</th>' : '' ?></tr></thead>
+        <tbody>
+        <?php foreach ($group->items as $item) : ?>
+            <tr>
+            <td><?= $h($item->no) ?></td>
+            <td><a href="#<?= $h($item->anchor()) ?>"><?= $h($item->title) ?></a></td>
+            <td class="res"><span class="badge <?= $h($item->badge) ?>"><?= $h($item->badgeLabel) ?></span></td>
+            <?php if ($extra !== null) : ?>
+                <td class="num"><?= $h($item->extra) ?></td>
+            <?php endif; ?>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+        </table>
+    <?php endif; ?>
     </div>
 <?php endforeach; ?>
 </section>
+
+<?php if ($doc->checkLists !== []) : ?>
+    <section class="checks">
+    <h2><?= $h($doc->checksTitle) ?></h2>
+    <?php foreach ($doc->checkLists as $list) : ?>
+        <?php $badge = $list->hasBadge(); ?>
+        <div class="check-list">
+        <h3><?= $h($list->title) ?></h3>
+        <?php if ($list->note !== null) : ?>
+            <p class="check-note"><?= $h($list->note) ?></p>
+        <?php endif; ?>
+        <?php if ($list->checks === []) : ?>
+            <p class="empty"><?= $h($list->empty ?? $none) ?></p>
+        <?php else : ?>
+            <table>
+            <colgroup><col class="id" style="width: <?= $list->idWidth() ?>mm"><col><?= $badge ? '<col class="res">' : '' ?><?= str_repeat('<col>', max(0, count($list->columns) - ($badge ? 3 : 2))) ?></colgroup>
+            <thead><tr><?= implode('', array_map(static fn(string $column): string => '<th>' . $h($column) . '</th>', $list->columns)) ?></tr></thead>
+            <tbody>
+            <?php foreach ($list->checks as $check) : ?>
+                <tr>
+                <td class="mono"><?= $h($check->id) ?></td>
+                <td><?= $h($check->title) ?></td>
+                <?php if ($badge) : ?>
+                    <td class="res"><?= $check->badge !== null ? '<span class="badge ' . $h($check->badge) . '">' . $h($check->badgeLabel) . '</span>' : '' ?></td>
+                <?php endif; ?>
+                <?php foreach (array_slice($check->values, 0, max(0, count($list->columns) - ($badge ? 3 : 2))) as $value) : ?>
+                    <td><?= $h($value) ?></td>
+                <?php endforeach; ?>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+            </table>
+        <?php endif; ?>
+        </div>
+    <?php endforeach; ?>
+    </section>
+<?php endif; ?>
 
 <?php foreach ($doc->groups as $group) : ?>
     <?php foreach ($group->items as $item) : ?>

@@ -4,6 +4,8 @@
  */
 declare(strict_types=1);
 
+use PieceOfCake2\Report\Check;
+use PieceOfCake2\Report\CheckList;
 use PieceOfCake2\Report\Count;
 use PieceOfCake2\Report\Cover;
 use PieceOfCake2\Report\Document;
@@ -39,6 +41,8 @@ $doc = new Document(
             new Item('1-1', 'Sends the message', 'pass', 'Passed', '1.2s', [new Row('Name', 'ContactsTest::testSend', monoValue: true)]),
             new Item('1-2', 'Shows the errors', 'fail', 'Failed', '0.4s', description: 'The required fields are checked.', message: new Message('Failure', 'The error message was not shown.')),
         ]),
+        // A group without items shows "None"
+        new Group(2, 'Search form'),
     ],
     project: $project,
     target: $cover->target($environment),
@@ -49,6 +53,14 @@ $doc = new Document(
     headerLeft: Cover::headerLeft($title, $project),
     headerRight: $cover->headerRight($startedAt, $environment),
     language: $translator->language(),
+    checkLists: [
+        new CheckList('Checks without findings', ['ID', 'Check', $translator->translate('field.result'), 'Note'], [
+            new Check('form-labels', 'The fields have labels', ['Every field of 3 forms'], 'pass', 'Passed'),
+            new Check('form-autocomplete', 'The passwords are not autocompleted', ['1 field'], 'pass', 'Passed'),
+        ], note: 'The checks that ran and found nothing: a row each, without a page.'),
+        new CheckList('Not run', ['ID', 'Check', 'Reason'], [new Check('form-captcha', 'The forms have a CAPTCHA', ['Turned off in the settings'])]),
+    ],
+    checksTitle: 'Checks',
 );
 
 (new ReportWriter())->write($doc, $argv[1] ?? 'tmp/sample.pdf');
