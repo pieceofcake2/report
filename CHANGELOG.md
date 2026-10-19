@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## 1.0.3
 
 - `Environment` no longer blocks on a large error output of Git: it waited for the output while Git waited to
   write its errors
